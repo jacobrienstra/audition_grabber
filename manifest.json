@@ -2,8 +2,8 @@
   "manifest_version": 2,
   "name": "BW Audition Grabber",
   "version": "0.1",
-
-  "permissions": ["declarativeContent", "activeTab", "downloads"],
+  "options_page": "html/options.html",
+  "permissions": ["declarativeContent", "activeTab", "downloads", "storage"],
 
   "page_action": {
     "default_icon": "images/icon.png",
