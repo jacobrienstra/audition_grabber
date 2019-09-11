@@ -126,7 +126,7 @@ chrome.storage.sync.get(function(settings) {
     }
 
     var filename = camelize(subject.replace(/[^a-z\s]/gi, "")).slice(0, 25);
-    // cal.download(filename);
+    cal.download(filename);
   }
 
   if (settings.calendar == "google") {
@@ -156,7 +156,7 @@ chrome.storage.sync.get(function(settings) {
       links.push(gCalLink);
     }
     for (link of links) {
-      console.log(link);
+      window.open(link, "_blank");
     }
   }
 });
