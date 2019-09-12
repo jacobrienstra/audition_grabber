@@ -9,5 +9,11 @@ button.addEventListener("click", function() {
   for (e of sectionCheckBoxes) {
     sections.push(e.value);
   }
-  chrome.storage.sync.set({ sections: sections, calendar: cal });
+  chrome.storage.sync.set({ sections: sections, calendar: cal }, function() {
+    var s = document.getElementById("saved");
+    s.className = "show";
+    setTimeout(function() {
+      s.className = s.className.replace("show", "");
+    }, 3000);
+  });
 });

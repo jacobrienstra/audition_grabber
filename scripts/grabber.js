@@ -1,4 +1,19 @@
 // ES6
+// Recursively check current node and all children
+var nodeOrChildrenMatches = function(node, match) {
+  if (node.matches(match)) return true;
+  var doesMatch = false;
+  if (node.hasChildNodes() && match) {
+    for (let i = 0; i < node.childNodes.length; i++) {
+      if (node.childNodes[i].nodeType === 1) {
+        doesMatch |= nodeOrChildrenMatches(node.childNodes[i], match);
+        if (doesMatch == true) return doesMatch;
+      }
+    }
+  }
+  return doesMatch;
+};
+
 // Get all the sibling tags until some tag, filtering out filter
 var nextUntil = function(node, until, filter) {
   var siblings = [];
@@ -9,7 +24,7 @@ var nextUntil = function(node, until, filter) {
       if (!/^\s*\n*$/.test(node.textContent)) siblings.push(node);
     }
     if (node.nodeType === 1) {
-      if (until && node.matches(until)) {
+      if (until && nodeOrChildrenMatches(node, until)) {
         break;
       }
       if (filter && node.matches(filter)) {
@@ -24,11 +39,11 @@ chrome.storage.sync.get(function(settings) {
   var sections = settings.sections;
   var headers = document.getElementsByTagName("strong");
   var dateRegex = /\b(?:(?:Mon)|(?:Tues?)|(?:Wed(?:nes)?)|(?:Thur?s?)|(?:Fri)|(?:Sat(?:ur)?)|(?:Sun))(?:day)?\b[:\-,]?\s*(?:(?:jan|feb)?r?(?:uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|oct(?:ober)?|(?:sept?|nov|dec)(?:ember)?)\s+\d{1,2}\s*,?\s*\d{4}/i;
-  var timeRegex = /^(?:((?:1[0-2]|0?[1-9])(?::(?:[0-5][0-9]))?(?:\s*)(?:[ap]m)?(?:\s*(?:-?|(?:to)?)\s*)?(?:1[0-2]|0?[1-9])(?::(?:[0-5][0-9]))?(?:\s*)(?:[ap]m)?)(?:\s*)(\([a-z]{3}\)))/i;
+  var timeRegex = /^(?:((?:1[0-2]|0?[1-9])(?::(?:[0-5][0-9]))?(?:\s*)(?:[ap]m)?(?:(?:\s*(?:-?|(?:to)?)\s*)?(?:1[0-2]|0?[1-9])(?::(?:[0-5][0-9]))?(?:\s*)(?:[ap]m)?)?)(?:\s*)(\([a-z]{3}\)))/i;
   var date = (start_time = end_time = null);
   var subject = (loc = desc = "");
 
-  // Assume the title is in the first <strong> tag
+  // Assume the title is in the first <strong> tag (I KNOW i hate this too)
   var title = headers[0];
   subject += title.textContent.trim() + " "; // bold text
   subject += nextUntil(title, "strong", "br")
@@ -51,11 +66,14 @@ chrome.storage.sync.get(function(settings) {
           }
           // if time & we have date, add start & end
           if (timeRegex.test(line) && curDate !== "") {
-            var matches = line.match(timeRegex);
-            var [start, end] = matches[1].split("-").map(e => e.trim());
-            var tz = "";
+            let matches = line.match(timeRegex);
+            let [start, end] = matches[1].split("-").map(e => e.trim());
+            let tz = "";
             if (matches.length == 3) {
               tz = matches[2];
+            }
+            if (end === undefined) {
+              end = start;
             }
             dates.push({
               start: [curDate, start, tz].join(" "),
@@ -68,9 +86,19 @@ chrome.storage.sync.get(function(settings) {
           }
         }
         dates = dates.map(function(dateDict) {
+          let start = new Date(dateDict.start);
+          let end = new Date(dateDict.end);
+          if (end.getTime() == start.getTime()) {
+            // if there's no end time (???? why), set it as an hour later
+            // and add a big note in the description
+            end.setTime(end.getTime() + 3600000);
+            desc = "***NO END TIME PROVIDED. FIGURE IT OUT I GUESS.***\n\n".concat(
+              desc
+            );
+          }
           return {
-            start: new Date(dateDict.start),
-            end: new Date(dateDict.end)
+            start: start,
+            end: end
           };
         });
         desc += other.join("\n\n");
@@ -120,7 +148,7 @@ chrome.storage.sync.get(function(settings) {
 
   if (settings.calendar == "apple") {
     var cal = ics();
-    desc = desc.replace("\n", "\\n");
+    desc = desc.replace(/\n/g, "\\n");
     for (date of dates) {
       cal.addEvent(subject, desc, escapeCommas(loc), date.start, date.end, url);
     }

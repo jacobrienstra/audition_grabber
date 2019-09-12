@@ -47,6 +47,60 @@
       .btn-container {
         margin: 20px 30px;
       }
+
+      #saved {
+        color: #28a745;
+        visibility: hidden;
+      }
+      div#saved.show {
+        visibility: visible;
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+
+      @-webkit-keyframes fadein {
+        from {
+          bottom: 0;
+          opacity: 0;
+        }
+        to {
+          bottom: 30px;
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadein {
+        from {
+          bottom: 0;
+          opacity: 0;
+        }
+        to {
+          bottom: 30px;
+          opacity: 1;
+        }
+      }
+
+      @-webkit-keyframes fadeout {
+        from {
+          bottom: 30px;
+          opacity: 1;
+        }
+        to {
+          bottom: 0;
+          opacity: 0;
+        }
+      }
+
+      @keyframes fadeout {
+        from {
+          bottom: 30px;
+          opacity: 1;
+        }
+        to {
+          bottom: 0;
+          opacity: 0;
+        }
+      }
     </style>
     <title>Audition Grabber Options</title>
   </head>
@@ -94,6 +148,9 @@
     </div>
     <div class="btn-container">
       <button class="btn" id="save">Save</button>
+    </div>
+    <div id="saved">
+      <h2>Saved!</h2>
     </div>
   </body>
   <script src="../scripts/options.js"></script>
