@@ -153,7 +153,12 @@ chrome.storage.sync.get(function(settings) {
       cal.addEvent(subject, desc, escapeCommas(loc), date.start, date.end, url);
     }
 
-    var filename = camelize(subject.replace(/[^a-z\s]/gi, "")).slice(0, 25);
+    var filename =
+      camelize(subject.replace(/[^a-z\s]/gi, "")).slice(0, 20) +
+      new Date()
+        .toISOString()
+        .replace(/[\-:\.]/g, "")
+        .slice(0, 15);
     cal.download(filename);
   }
 
