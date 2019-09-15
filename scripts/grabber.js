@@ -42,6 +42,8 @@ chrome.storage.sync.get(function(settings) {
   var timeRegex = /^(?:((?:1[0-2]|0?[1-9])(?::(?:[0-5][0-9]))?(?:\s*)(?:[ap]m)?(?:(?:\s*(?:-?|(?:to)?)\s*)?(?:1[0-2]|0?[1-9])(?::(?:[0-5][0-9]))?(?:\s*)(?:[ap]m)?)?)(?:\s*)(\([a-z]{3}\)))/i;
   var date = (start_time = end_time = null);
   var subject = (loc = desc = "");
+  var dates = [];
+  var other = [];
 
   // Assume the title is in the first <strong> tag (I KNOW i hate this too)
   var title = headers[0];
@@ -52,9 +54,8 @@ chrome.storage.sync.get(function(settings) {
   for (let header of headers) {
     switch (header.textContent) {
       case "AUDITION DATE":
+      case "AUDITION DATES":
         data = nextUntil(header, "strong", "br");
-        dates = [];
-        other = [];
         let curDate = "";
         // iterate through date data
         for (let line of data) {
