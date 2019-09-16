@@ -56,13 +56,18 @@ var nextUntil = function(node, until, filter) {
     // You can't skip text nodes
     if (node.nodeType === 3) {
       // No empty text nodes
-      if (!/^\s*\n*$/.test(node.textContent)) siblings.push(node);
+      if (!/^\s*\n*$/.test(node.textContent) && node.textContent !== "") {
+        siblings.push(node);
+      }
     }
     if (node.nodeType === 1) {
       if (until && nodeOrChildrenMatches(node, until)) {
         break;
       }
-      if (filter && node.matches(filter)) {
+      if (
+        (filter && nodeOrChildrenMatches(node, filter)) ||
+        nodeOrChildrenMatches(node, "script")
+      ) {
         continue;
       }
       siblings.push(node);
@@ -240,6 +245,7 @@ chrome.storage.sync.get(function(settings) {
       }
     }
   } catch (e) {
+    console.log(e);
     launch_toast();
   }
 });
