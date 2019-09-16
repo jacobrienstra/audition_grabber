@@ -213,7 +213,7 @@ chrome.storage.sync.get(function(settings) {
 
       var filename =
         camelize(subject.replace(/[^a-z\s]/gi, "")).slice(0, 20) +
-        moment.valueOf();
+        moment().valueOf();
       cal.download(filename);
     }
 
