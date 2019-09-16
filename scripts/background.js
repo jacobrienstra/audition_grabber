@@ -27,20 +27,17 @@ chrome.runtime.onInstalled.addListener(function(details) {
 // Called when the user clicks on the browser action.
 chrome.pageAction.onClicked.addListener(function(tab) {
   // No tabs or host permissions needed!
-  chrome.tabs.executeScript(
-    { file: "scripts/moment.js" },
-    function() {
-      chrome.tabs.executeScript(
-        { file: "scripts/moment-timezone-with-data-10-year-range.js" },
-        function() {
-          chrome.tabs.executeScript(
-            { file: "scripts/ics.deps.min.js" },
-            function() {
-              chrome.tabs.executeScript({ file: "scripts/grabber.js" });
-            }
-          );
-        }
-      );
-    }
-  );
+  chrome.tabs.executeScript({ file: "scripts/moment.js" }, function() {
+    chrome.tabs.executeScript(
+      { file: "scripts/moment-timezone-with-data-10-year-range.js" },
+      function() {
+        chrome.tabs.executeScript(
+          { file: "scripts/ics.deps.min.js" },
+          function() {
+            chrome.tabs.executeScript({ file: "scripts/grabber.js" });
+          }
+        );
+      }
+    );
+  });
 });

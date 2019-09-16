@@ -1,4 +1,13 @@
 // ES6
+// American Timezones BWWorld is likely to use
+var tzAbbrs = {
+  EDT: "America/New_York",
+  CDT: "America/Chicago",
+  MDT: "America/Denver",
+  MST: "America/Phoenix", // honestly, arizona?
+  PDT: "America/Los_Angeles"
+};
+
 // Recursively check current node and all children
 var nodeOrChildrenMatches = function(node, match) {
   if (node.matches(match)) return true;
@@ -61,8 +70,8 @@ chrome.storage.sync.get(function(settings) {
         for (let line of data) {
           line = line.textContent.trim();
           // if date, reset curDate str to it
-          if (dateRegex.test(line)) {
-            curDate = line.trim();
+          if (moment(line, "ddd, MMM D, YYYY").isValid()) {
+            curDate = line;
             continue;
           }
           // if time & we have date, add start & end
@@ -71,14 +80,20 @@ chrome.storage.sync.get(function(settings) {
             let [start, end] = matches[1].split("-").map(e => e.trim());
             let tz = "";
             if (matches.length == 3) {
-              tz = matches[2];
+              tz = matches[2].replace(/[()]/g, "");
             }
             if (end === undefined) {
               end = start;
             }
+            if (tzAbbrs[tz] != null) {
+              tz = tzAbbrs[tz];
+            } else {
+              tz = "";
+            }
             dates.push({
-              start: [curDate, start, tz].join(" "),
-              end: [curDate, end, tz].join(" ")
+              start: [curDate, start].join(" "),
+              end: [curDate, end].join(" "),
+              tz: tz
             });
             continue;
           } else {
@@ -87,15 +102,22 @@ chrome.storage.sync.get(function(settings) {
           }
         }
         dates = dates.map(function(dateDict) {
-          let start = new Date(dateDict.start);
-          let end = new Date(dateDict.end);
-          if (end.getTime() == start.getTime()) {
+          let start = moment.tz(
+            dateDict.start,
+            "ddd, MMM D, YYYY h:mma",
+            dateDict.tz
+          );
+          let end = moment.tz(
+            dateDict.end,
+            "ddd, MMM D, YYYY h:mma",
+            dateDict.tz
+          );
+          if (end.format() == start.format()) {
             // if there's no end time (???? why), set it as an hour later
             // and add a big note in the description
-            end.setTime(end.getTime() + 3600000);
-            desc = "***NO END TIME PROVIDED. FIGURE IT OUT I GUESS.***\n\n".concat(
-              desc
-            );
+            end.add(1, "hours");
+            desc =
+              "***NO END TIME PROVIDED. FIGURE IT OUT I GUESS.***\n\n" + desc;
           }
           return {
             start: start,
@@ -156,10 +178,7 @@ chrome.storage.sync.get(function(settings) {
 
     var filename =
       camelize(subject.replace(/[^a-z\s]/gi, "")).slice(0, 20) +
-      new Date()
-        .toISOString()
-        .replace(/[\-:\.]/g, "")
-        .slice(0, 15);
+      moment.valueOf();
     cal.download(filename);
   }
 
@@ -169,20 +188,12 @@ chrome.storage.sync.get(function(settings) {
       var gCalLink =
         "https://calendar.google.com/calendar/r/eventedit?trp=False&sf=true&text=" +
         encodeURIComponent(subject) +
-        "&dates=" +
-        date.start
-          .toISOString()
-          .replace(/[\-:\.]/g, "")
-          .replace("000Z", "Z") +
-        "/" +
-        date.end
-          .toISOString()
-          .replace(/[\-:\.]/g, "")
-          .replace("000Z", "Z") +
         "&ctz=" +
-        date.start
-          .toLocaleTimeString("en-us", { timeZoneName: "short" })
-          .split(" ")[2] +
+        date.start.tz() +
+        "&dates=" +
+        date.start.utc().format("YYYYMMDD[T]HHmmss[Z]") +
+        "/" +
+        date.end.utc().format("YYYYMMDD[T]HHmmss[Z]") +
         "&details=" +
         encodeURIComponent(desc + "\n\n" + url) +
         "&location=" +
