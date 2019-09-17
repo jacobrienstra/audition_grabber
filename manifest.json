@@ -10,6 +10,19 @@
     "default_title": "Grabber for Broadway World Audition Listings"
   },
 
+  "content_scripts": [
+    {
+      "matches": ["https://*.broadwayworld.com/*equity-audition*"],
+      "css": ["css/toast.css"],
+      "js": [
+        "scripts/lib/ics.deps.min.js",
+        "scripts/lib/moment.js",
+        "scripts/lib/moment-timezone-with-data-10-year-range.js",
+        "scripts/global.js"
+      ]
+    }
+  ],
+
   "background": {
     "scripts": ["scripts/background.js"],
     "persistent": false

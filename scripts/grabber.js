@@ -1,80 +1,6 @@
 // ES6
-// American Timezones BWWorld is likely to use
-var tzAbbrs = {
-  EDT: "America/New_York",
-  CDT: "America/Chicago",
-  MDT: "America/Denver",
-  MST: "America/Phoenix", // honestly, arizona?
-  PDT: "America/Los_Angeles"
-};
 
-function addStyleString(str) {
-  var node = document.createElement("style");
-  node.innerHTML = str;
-  document.body.appendChild(node);
-}
-
-var toastStyle =
-  "#toast {visibility: hidden;background-color: #333;color: #fff;text-align: center;border-radius: 2px;position: fixed;z-index: 1;right: 40px;top:60px;font-size: 17px;white-space: nowrap;}#toast #desc{color: #fff;padding: 24px;overflow: hidden;white-space:nowrap;}#toast.show {visibility: visible;-webkit-animation: fadein 0.5s,stay 3s 1s, fadeout 0.5s 2.5s;animation: fadein 0.5s, stay 3s 1s, fadeout 0.5s 4.5s;}@-webkit-keyframes fadein {from {top: -30px; opacity: 0;}to {top: 60px; opacity: 1;}}@keyframes fadein {from {top: -30px; opacity: 0;}to {top: 60px; opacity: 1;}}@-webkit-keyframes fadeout {from {top: 60px; opacity: 1;}to {top: -30px; opacity: 0;}}@keyframes fadeout {from {top: 60px; opacity: 1;}to {top: -30px; opacity: 0;}}";
-
-addStyleString(toastStyle);
-var toastDiv = document.createElement("div");
-toastDiv.id = "toast";
-var descDiv = document.createElement("div");
-descDiv.id = "desc";
-descDiv.innerHTML = "Something fucked up. Sorry.";
-toastDiv.appendChild(descDiv);
-document.body.appendChild(toastDiv);
-
-function launch_toast() {
-  var x = document.getElementById("toast");
-  x.className = "show";
-  setTimeout(function() {
-    x.className = x.className.replace("show", "");
-  }, 5000);
-}
-
-// Recursively check current node and all children
-var nodeOrChildrenMatches = function(node, match) {
-  if (node.matches(match)) return true;
-  var doesMatch = false;
-  if (node.hasChildNodes() && match) {
-    for (let i = 0; i < node.childNodes.length; i++) {
-      if (node.childNodes[i].nodeType === 1) {
-        doesMatch |= nodeOrChildrenMatches(node.childNodes[i], match);
-        if (doesMatch == true) return doesMatch;
-      }
-    }
-  }
-  return doesMatch;
-};
-
-// Get all the sibling tags until some tag, filtering out filter
-var nextUntil = function(node, until, filter) {
-  var siblings = [];
-  while ((node = node.nextSibling) && node.nodeType !== 9) {
-    // You can't skip text nodes
-    if (node.nodeType === 3) {
-      // No empty text nodes
-      if (!/^\s*\n*$/.test(node.textContent) && node.textContent !== "") {
-        siblings.push(node);
-      }
-    }
-    if (node.nodeType === 1) {
-      if (until && nodeOrChildrenMatches(node, until)) {
-        break;
-      }
-      if (
-        (filter && nodeOrChildrenMatches(node, filter)) ||
-        nodeOrChildrenMatches(node, "script")
-      ) {
-        continue;
-      }
-      siblings.push(node);
-    }
-  }
-  return siblings;
-};
+// Get settings
 chrome.storage.sync.get(function(settings) {
   try {
     var sections = settings.sections;
@@ -246,6 +172,6 @@ chrome.storage.sync.get(function(settings) {
     }
   } catch (e) {
     console.log(e);
-    launch_toast();
+    launchToast();
   }
 });

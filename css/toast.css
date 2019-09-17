@@ -1,0 +1,81 @@
+#toast {
+  opacity: 0;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  position: fixed;
+  z-index: 1;
+  right: 40px;
+  top: 60px;
+  font-size: 17px;
+  white-space: nowrap;
+}
+#toast #desc {
+  color: #fff;
+  padding: 24px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+#toast.show {
+  -webkit-animation: fadein 0.5s, stay 1s 0.5s, fadeout 0.5s 1.5s;
+  animation: fadein 0.5s, stay 1s 0.5s, fadeout 0.5s 1.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {
+    top: -30px;
+    opacity: 0;
+  }
+  to {
+    top: 60px;
+    opacity: 1;
+  }
+}
+@keyframes fadein {
+  from {
+    top: -30px;
+    opacity: 0;
+  }
+  to {
+    top: 60px;
+    opacity: 1;
+  }
+}
+@-webkit-keyframes stay {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes stay {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeout {
+  from {
+    top: 60px;
+    opacity: 1;
+  }
+  to {
+    top: -30px;
+    opacity: 0;
+  }
+}
+@keyframes fadeout {
+  from {
+    top: 60px;
+    opacity: 1;
+  }
+  to {
+    top: -30px;
+    opacity: 0;
+  }
+}
