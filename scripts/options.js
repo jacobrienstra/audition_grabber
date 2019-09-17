@@ -20,15 +20,8 @@ button.addEventListener("click", function() {
   }
   var toast = document.getElementById("toast");
   chrome.storage.sync.set({ sections: sections, calendar: cal }, function() {
-    // -> removing the class
     toast.classList.remove("show");
-    // -> triggering reflow /* The actual magic */
-    // without this it wouldn't work. Try uncommenting the line and the transition won't be retriggered.
-    // Oops! This won't work in strict mode. Thanks Felis Phasma!
-    // element.offsetWidth = element.offsetWidth;
-    // Do this instead:
     void toast.offsetWidth;
-    // -> and re-adding the class
     toast.classList.add("show");
   });
 });

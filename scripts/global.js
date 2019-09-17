@@ -7,9 +7,9 @@ var tzAbbrs = {
   PDT: "America/Los_Angeles"
 };
 
-var toastDiv = document.createElement("div");
+const toastDiv = document.createElement("div");
 toastDiv.id = "toast";
-var descDiv = document.createElement("div");
+const descDiv = document.createElement("div");
 descDiv.id = "desc";
 descDiv.innerHTML = "Something fucked up. Sorry.";
 toastDiv.appendChild(descDiv);
@@ -17,11 +17,10 @@ toastDiv.appendChild(descDiv);
 document.body.appendChild(toastDiv);
 
 const launchToast = function() {
-  var x = document.getElementById("toast");
-  x.className = "show";
-  setTimeout(function() {
-    x.className = x.className.replace("show", "");
-  }, 5000);
+  var toast = document.getElementById("toast");
+  toast.classList.remove("show");
+  void toast.offsetWidth;
+  toast.classList.add("show");
 };
 
 // Recursively check current node and all children
@@ -37,6 +36,29 @@ const nodeOrChildrenMatches = function(node, match) {
     }
   }
   return doesMatch;
+};
+
+const escapeCommas = function(string) {
+  return string.replace(/[,\/]/g, "\\,");
+};
+
+const camelize = (text, separator = " ") => {
+  const words = text.split(separator);
+  const result = [];
+  words.forEach(word =>
+    result.push(word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+  );
+  return result.join("");
+};
+
+const foldLine = function(line) {
+  const parts = [];
+  while (line.length > 50) {
+    parts.push(line.slice(0, 50));
+    line = line.slice(50);
+  }
+  parts.push(line);
+  return parts.join("\r\n ");
 };
 
 // Get all the sibling tags until some tag, filtering out filter

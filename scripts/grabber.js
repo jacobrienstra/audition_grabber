@@ -44,9 +44,9 @@ chrome.storage.sync.get(function(settings) {
                 end = start;
               }
               if (tzAbbrs[tz] != null) {
-                tz = tzAbbrs[tz];
+                tz = tzAbbrs[tz]; // look up tz database name
               } else {
-                tz = "";
+                tz = ""; // otherwise, default local tz
               }
               dates.push({
                 start: [curDate, start].join(" "),
@@ -101,29 +101,6 @@ chrome.storage.sync.get(function(settings) {
               .join(" ");
           break;
       }
-    }
-
-    var escapeCommas = function(string) {
-      return string.replace(/[,\/]/g, "\\,");
-    };
-
-    var camelize = (text, separator = " ") => {
-      const words = text.split(separator);
-      const result = [];
-      words.forEach(word =>
-        result.push(word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      );
-      return result.join("");
-    };
-
-    function foldLine(line) {
-      const parts = [];
-      while (line.length > 50) {
-        parts.push(line.slice(0, 50));
-        line = line.slice(50);
-      }
-      parts.push(line);
-      return parts.join("\r\n ");
     }
 
     var url = window.location.href;

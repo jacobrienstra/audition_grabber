@@ -12,7 +12,7 @@
 
   "content_scripts": [
     {
-      "matches": ["https://*.broadwayworld.com/*equity-audition*"],
+      "matches": ["https://www.broadwayworld.com/*equity-audition*"],
       "css": ["css/toast.css"],
       "js": [
         "scripts/lib/ics.deps.min.js",
