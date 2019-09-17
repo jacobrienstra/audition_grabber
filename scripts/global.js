@@ -11,16 +11,15 @@ const toastDiv = document.createElement("div");
 toastDiv.id = "toast";
 const descDiv = document.createElement("div");
 descDiv.id = "desc";
-descDiv.innerHTML = "Something fucked up. Sorry.";
 toastDiv.appendChild(descDiv);
 
 document.body.appendChild(toastDiv);
 
-const launchToast = function() {
-  var toast = document.getElementById("toast");
-  toast.classList.remove("show");
-  void toast.offsetWidth;
-  toast.classList.add("show");
+const launchToast = function(e = "Something fucked up. Sorry.") {
+  descDiv.textContent = e;
+  toastDiv.classList.remove("show");
+  void toastDiv.offsetWidth;
+  toastDiv.classList.add("show");
 };
 
 // Recursively check current node and all children

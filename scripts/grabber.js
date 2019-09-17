@@ -106,6 +106,9 @@ chrome.storage.sync.get(function(settings) {
     var url = window.location.href;
 
     if (settings.calendar == "apple") {
+      if (dates.length === 0) {
+        throw "No events found on this page ¯\\_(ツ)_/¯";
+      }
       var cal = ics();
       desc = desc.replace(/\n/g, "\\n");
       for (date of dates) {
@@ -148,7 +151,6 @@ chrome.storage.sync.get(function(settings) {
       }
     }
   } catch (e) {
-    console.log(e);
-    launchToast();
+    launchToast(e);
   }
 });
