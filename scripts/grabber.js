@@ -5,46 +5,66 @@ chrome.storage.sync.get(function (settings) {
   try {
     var sections = settings.sections;
     var headers = document.getElementsByTagName("strong");
-    var dateRegex = /\b(?:(?:Mon)|(?:Tues?)|(?:Wed(?:nes)?)|(?:Thur?s?)|(?:Fri)|(?:Sat(?:ur)?)|(?:Sun))(?:day)?\b[:\-,]?\s*(?:(?:jan|feb)?r?(?:uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|oct(?:ober)?|(?:sept?|nov|dec)(?:ember)?)\s+\d{1,2}\s*,?\s*\d{4}/i;
-    var timeRegex = /^(?:((?:1[0-2]|0?[1-9])(?::(?:[0-5][0-9]))?(?:\s*)(?:[ap]m)?(?:(?:\s*(?:-?|(?:to)?)\s*)?(?:1[0-2]|0?[1-9])(?::(?:[0-5][0-9]))?(?:\s*)(?:[ap]m)?)?)(?:\s*)(\([a-z]{3}\)))([\d\w]*\s*.*)/i;
-    var date = (start_time = end_time = null);
-    var subject = (loc = desc = "");
     var dates = [];
+    var locations = {};
+    var defaultLoc = null;
+    var desc = "";
 
-    // Assume the title is in the first <strong> tag (I KNOW i hate this too)
+    // Assume the title is in the first <strong> tag (i KNOW i hate this too)
     var title = headers[0];
-    subject += title.textContent.trim() + " "; // bold text
+    // TODO: check parents
+    var subject = title.textContent.trim() + " "; // bold text
     subject += nextUntil(title, "strong", "br")
       .map(node => node.textContent.trim())
       .join(" ");
-    for (let header of headers) {
-      switch (header.textContent) {
+    for (const [i, header] of [...headers].entries()) {
+      let headerText = header.textContent.trim();
+      // I hate this so much it's so dumb but I have SEEN this.
+      // part of the word is in the strong tag and 
+      // part isn't. why? who can say. certainly not BWayWorld!
+      if (header.previousSibling && header.previousSibling.nodeType === 3 && header.nextSibling && header.nextSibling.nodeType === 3) {
+        headerText = header.previousSibling.textContent.trim() + header.textContent.trim() + header.nextSibling.textContent.trim();
+      }
+      switch (headerText) {
         case "AUDITION DATE":
         case "AUDITION DATES":
-          data = nextUntil(header, "strong", "br");
-          let curDate = '';
-          // iterate through date data
-          var extratext = '';
-          for (let line of data) {
+          lines = nextUntil(header, "strong", "BR");
+          // unaccounted for text init val
+          let extraText = '';
+          // check regex per line, collect extra
+          for (let [l, line] of [...lines].entries()) {
             line = line.textContent.trim();
-            // if date, add extratext to last date, reset curDate str to new date
+            // if date, add extraText and reset
             if (moment(line, "ddd, MMM D, YYYY").isValid()) {
-              extratext = '';
+              if (dates.length > 0) {
+                dates[dates.length - 1].extraText += extraText;
+                extraText = '';
+              }
               curDate = line;
+              // check for **
+              if (/\*+/.test(line)) {
+                excIn = dates.length; // current index
+              }
               continue;
             }
-            // if time & we have date, add start & end
-            if (timeRegex.test(line) && curDate !== "") {
+            // if time & we have date (idk why we wouldn't), add start & end
+            if (timeRegex.test(line) && curDate !== '') {
               let matches = line.match(timeRegex);
               let [start, end] = matches[1].split("-").map(e => e.trim());
               let tz = '';
-              if (matches.length >= 3) {
+              // timezone
+              if (matches[2] != null) {
                 tz = matches[2].replace(/[()]/g, "");
-                if (matches.length === 4) extratext += (matches[3].trim() + '\n');
               }
+              // anything else
+              if (matches[3] != null) {
+                extraText += (matches[3].trim());
+              }
+              // no end time
               if (end === undefined) {
                 end = start;
               }
+              // no timezone
               if (tzAbbrs[tz] != null) {
                 tz = tzAbbrs[tz]; // look up tz database name
               } else {
@@ -54,14 +74,22 @@ chrome.storage.sync.get(function (settings) {
                 start: [curDate, start].join(" "),
                 end: [curDate, end].join(" "),
                 tz: tz,
-                extratext: extratext,
+                extraText: '',
               });
               continue;
             } else {
               // probably lunch info but who knows
-              if (dates.length !== 0) dates[dates.length - 1]['extratext'] += (line + '\n');
+              // if we have text, add break
+              if (extraText != '') {
+                extraText += '\n\n';
+              }
+              extraText += (line);
+              if (l === lines.length - 1) {
+                dates[dates.length - 1].extraText += extraText;
+              }
             }
           }
+
           dates = dates.map(function (dateDict) {
             idesc = '';
             let start = moment.tz(
@@ -84,21 +112,40 @@ chrome.storage.sync.get(function (settings) {
             return {
               start: start,
               end: end,
-              idesc: idesc + dateDict.extratext,
+              idesc: idesc + dateDict.extraText,
             };
           });
           break;
         case "LOCATION":
         case "LOCATIONS":
-          loc = nextUntil(header, "strong", "br")
-            .map(node => node.textContent.trim())
-            .join(" ");
+          // TODO: need error handling
+          const locLines = nextUntil(header, "strong", "br");
+          for (let [j, locLine] of [...locLines].entries()) {
+            if (shortDateRegex.test(locLine.textContent.trim())) {
+              defaultLoc = locLines.slice(0, j).join(" ");
+              // generalize
+              let locDate = getShortDate(locLine.textContent.trim());
+              if (locDate != null) {
+                locations[locDate] = nextUntil(locLine, "br", "br", 2).map(n => n.textContent.trim()).join(" ");
+                // TODO: test this
+              }
+            }
+          }
+          var k = i;
+          var curHeader = header;
+          while (k++ && (curHeader = headers[k]) && k < headers.length && shortDateRegex.test(curHeader.textContent.trim())) {
+            locDate = getShortDate(curHeader.textContent.trim());
+            locations[locDate] = nextUntil(curHeader, "strong", "br").map(n => n.textContent.trim()).join(" ");
+            if (defaultLoc === null) {
+              defaultLoc = locLines.map(n => n.textContent.trim()).join(" ");
+            }
+          }
           break;
         default:
-          if (!sections.includes(header.textContent)) break;
+          if (!sections.includes(headerText)) break;
           if (desc != "") desc += "\n\n";
           desc +=
-            header.textContent +
+            headerText +
             "\n" +
             nextUntil(header, "strong", "br")
             .map(node => node.textContent.trim())
@@ -109,6 +156,15 @@ chrome.storage.sync.get(function (settings) {
 
     var url = window.location.href;
 
+    for (date of dates) {
+      var day = date.start.format("DDD");
+      if (day in locations) {
+        date.loc = locations[day];
+      } else {
+        date.loc = defaultLoc;
+      }
+    }
+
     if (settings.calendar == "apple") {
       if (dates.length === 0) {
         throw "No events found on this page ¯\\_(ツ)_/¯";
@@ -118,7 +174,7 @@ chrome.storage.sync.get(function (settings) {
         cal.addEvent(
           subject,
           (date.idesc + "\n\n" + desc).replace(/\n/g, "\\n"),
-          escapeCommas(loc),
+          escapeCommas(date.loc),
           date.start,
           date.end,
           url
@@ -144,9 +200,9 @@ chrome.storage.sync.get(function (settings) {
           "/" +
           date.end.utc().format("YYYYMMDD[T]HHmmss[Z]") +
           "&details=" +
-          encodeURIComponent(desc + "\n\n" + url) +
+          encodeURIComponent(date.idesc + "\n\n" + desc + "\n\n" + url) +
           "&location=" +
-          encodeURI(loc);
+          encodeURI(date.loc);
         links.push(gCalLink);
       }
       for (link of links) {
