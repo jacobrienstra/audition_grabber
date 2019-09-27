@@ -1,30 +1,26 @@
 {
   "manifest_version": 2,
   "name": "BroadwayWorld Audition Grabber",
-  "version": "0.4",
+  "version": "0.5",
   "options_page": "html/options.html",
   "permissions": ["declarativeContent", "activeTab", "downloads", "storage"],
 
   "page_action": {
     "default_icon": "images/icon.png",
-    "default_title": "Grabber for Broadway World Audition Listings"
+    "default_title": "Parses Broadway World Audition Listings and Adds to Calendar"
   },
 
-  "content_scripts": [
-    {
-      "matches": ["https://www.broadwayworld.com/*equity-audition*"],
-      "css": ["css/toast.css"],
-      "js": [
-        "scripts/lib/ics.deps.min.js",
-        "scripts/lib/moment.js",
-        "scripts/lib/moment-timezone-with-data-10-year-range.js",
-        "scripts/global.js"
-      ]
-    }
-  ],
+  "content_scripts": [{
+    "matches": ["https://www.broadwayworld.com/*equity-audition*"],
+    "css": ["css/toast.css"],
+    "js": [
+      "scripts/min/deps.min.js",
+      "scripts/min/global.min.js"
+    ]
+  }],
 
   "background": {
-    "scripts": ["scripts/background.js"],
+    "scripts": ["scripts/min/background.min.js"],
     "persistent": false
   }
 }

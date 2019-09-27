@@ -1,0 +1,29 @@
+{
+    "name": "auditiongrabber",
+    "version": "0.5.0",
+    "description": "Chrome extension that parses audition listings to add to calendar",
+    "dependencies": {
+        "grunt-terser": "^0.1.0",
+        "grunt": "^1.0.4",
+        "grunt-contrib-concat": "^1.0.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/acciojacob/audition_grabber.git"
+    },
+    "keywords": [
+        "audition",
+        "chrome",
+        "theater",
+        "broadwayworld.com",
+        "broadway",
+        "calendar"
+    ],
+    "contributors": [
+        "Jacob Rienstra <jacobdrienstra@gmail.com>"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/acciojacob/audition_grabber/issues"
+    }
+}
