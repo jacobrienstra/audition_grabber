@@ -21,7 +21,7 @@ You can also right click to go to the options page, which as of now lets you:
 
 If it's not working, you should get an error notice containing a link that will submit an issue on github.
 
-Or it might "work" but get things wrong or fuck up somehow. If that's the case, submit an issue [here](https://github.com/acciojacob/audition_grabber/issues/new). Just say what's wrong and provide the listing url.
+Or it might "work" but get things wrong or fuck up somehow. If that's the case, submit an issue [here](https://github.com/jacobrienstra/audition_grabber/issues/new). Just say what's wrong and provide the listing url.
 
 I'll try to fix things quickly but like, I do have a life. Well maybe not. I mean I did make this in the first place. Whatever.
 
@@ -39,6 +39,6 @@ I've compressed and combined them.
 
 ## Credits
 
-- [Jacob Rienstra](https://github.com/acciojacob): Me
+- [Jacob Rienstra](https://github.com/jacobrienstra): Me
 
 Thank me on venmo.

@@ -212,7 +212,7 @@ chrome.storage.sync.get(function (settings) {
       }
     }
   } catch (e) {
-    var url = "https://github.com/acciojacob/audition_grabber/issues/new?title=" + encodeURIComponent(e).replace(/'/g, "%27") + "&body=" + encodeURIComponent(window.location.href);
+    var url = "https://github.com/jacobrienstra/audition_grabber/issues/new?title=" + encodeURIComponent(e).replace(/'/g, "%27") + "&body=" + encodeURIComponent(window.location.href);
     launchToast(e, true, url);
     console.log(e);
   }
