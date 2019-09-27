@@ -120,6 +120,7 @@ chrome.storage.sync.get(function (settings) {
         case "LOCATIONS":
           // TODO: need error handling
           const locLines = nextUntil(header, "strong", "br");
+          // check if any normal lines are date specific location header
           for (let [j, locLine] of [...locLines].entries()) {
             if (shortDateRegex.test(locLine.textContent.trim())) {
               defaultLoc = locLines.slice(0, j).join(" ");
@@ -131,14 +132,15 @@ chrome.storage.sync.get(function (settings) {
               }
             }
           }
+          // check if any subsequent sections are date specific location headers
           var k = i;
           var curHeader = header;
           while (k++ && (curHeader = headers[k]) && k < headers.length && shortDateRegex.test(curHeader.textContent.trim())) {
             locDate = getShortDate(curHeader.textContent.trim());
             locations[locDate] = nextUntil(curHeader, "strong", "br").map(n => n.textContent.trim()).join(" ");
-            if (defaultLoc === null) {
-              defaultLoc = locLines.map(n => n.textContent.trim()).join(" ");
-            }
+          }
+          if (defaultLoc === null) {
+            defaultLoc = locLines.map(n => n.textContent.trim()).join(" ");
           }
           break;
         default:
@@ -167,7 +169,7 @@ chrome.storage.sync.get(function (settings) {
 
     if (settings.calendar == "apple") {
       if (dates.length === 0) {
-        throw "No events found on this page ¯\\_(ツ)_/¯";
+        throw "Grabber doesn't think there are any events listed on this page. ¯\\_(ツ)_/¯";
       }
       var cal = ics();
       for (date of dates) {
@@ -210,7 +212,8 @@ chrome.storage.sync.get(function (settings) {
       }
     }
   } catch (e) {
+    var url = "https://github.com/acciojacob/audition_grabber/issues/new?title=" + encodeURIComponent(e).replace(/'/g, "%27") + "&body=" + encodeURIComponent(window.location.href);
+    launchToast(e, true, url);
     console.log(e);
-    launchToast(e);
   }
 });

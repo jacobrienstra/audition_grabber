@@ -14,14 +14,23 @@ const shortDateRegex = /^.*(((?:(?:Mon)|(?:Tues?)|(?:Wed(?:nes)?)|(?:Thur?s?)|(?
 
 const toastDiv = document.createElement("div");
 toastDiv.id = "toast";
+const wrapperDiv = document.createElement('div');
+wrapperDiv.classList.add("wrapper");
 const descDiv = document.createElement("div");
 descDiv.id = "desc";
-toastDiv.appendChild(descDiv);
+const reportDiv = document.createElement("div");
+reportDiv.id = "report";
+wrapperDiv.appendChild(descDiv);
+wrapperDiv.appendChild(reportDiv);
+toastDiv.appendChild(wrapperDiv);
 
 document.body.appendChild(toastDiv);
 
-const launchToast = function (e = "Something fucked up. Sorry.") {
+const launchToast = function (e = "Error. Sorry.", report = true, url = '') {
   descDiv.textContent = e;
+  if (report) {
+    reportDiv.innerHTML = "Is this a fuck up? <a href='" + url + "' target='_blank'>Tell me!</a> I'll try to fix it!";
+  }
   toastDiv.classList.remove("show");
   void toastDiv.offsetWidth;
   toastDiv.classList.add("show");
