@@ -1,48 +1,68 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/options.css" />
+    <link rel="stylesheet" type="text/css" href="../css/toast.css" />
+    <title>Audition Grabber Options</title>
+  </head>
 
-<head>
-  <link rel="stylesheet" type="text/css" href="../css/options.css" />
-  <link rel="stylesheet" type="text/css" href="../css/toast.css" />
-  <title>Audition Grabber Options</title>
-</head>
-
-<body>
-  <div class="main">
-    <div>
-      <h2 class="title">Audition Grabber Options</h2>
-    </div>
-    <div>
-      <h4>1. Add to Google calendar, or download .ics file?</h4>
-      <div id="calType" class="options">
-        <input type="radio" name="cal" value="apple" />.ics (Apple iCal)<br />
-        <input type="radio" name="cal" value="google" /> Google Calendar<br />
+  <body>
+    <div class="main">
+      <div>
+        <h2 class="title">Audition Grabber Options</h2>
+      </div>
+      <div>
+        <h4>1. Add to Google calendar, or download .ics file?</h4>
+        <div id="calType" class="options">
+          <input type="radio" name="cal" value="apple" />.ics (Apple iCal)<br />
+          <input type="radio" name="cal" value="google" /> Google Calendar<br />
+        </div>
+      </div>
+      <div>
+        <h4>
+          2. Which sections should be included in the event description? Select
+          as many as you like.
+        </h4>
+        <div id="sections" class="options">
+          <input
+            type="checkbox"
+            name="section"
+            value="APPOINTMENTS"
+          />Appointments<br />
+          <input
+            type="checkbox"
+            name="section"
+            value="CONTRACT"
+          />Contract<br />
+          <input type="checkbox" name="section" value="SEEKING" />Seeking<br />
+          <input
+            type="checkbox"
+            name="section"
+            value="PREPARATION"
+          />Preparation<br />
+          <input
+            type="checkbox"
+            name="section"
+            value="PERSONNEL"
+          />Personnel<br />
+          <input type="checkbox" name="section" value="OTHER DATES" />Other
+          Dates<br />
+          <input
+            type="checkbox"
+            name="section"
+            value="BREAKDOWN"
+          />Breakdown<br />
+        </div>
+      </div>
+      <div class="btn-container">
+        <button class="btn" id="save">Save</button>
       </div>
     </div>
-    <div>
-      <h4>
-        2. Which sections should be included in the event description? Select
-        as many as you like.
-      </h4>
-      <div id="sections" class="options">
-        <input type="checkbox" name="section" value="APPOINTMENTS" />Appointments<br />
-        <input type="checkbox" name="section" value="CONTRACT" />Contract<br />
-        <input type="checkbox" name="section" value="SEEKING" />Seeking<br />
-        <input type="checkbox" name="section" value="PREPARATION" />Preparation<br />
-        <input type="checkbox" name="section" value="PERSONNEL" />Personnel<br />
-        <input type="checkbox" name="section" value="OTHER DATES" />Other
-        Dates<br />
-        <input type="checkbox" name="section" value="BREAKDOWN" />Breakdown<br />
+    <div id="toast">
+      <div class="wrapper">
+        <div id="desc">Saved!</div>
       </div>
     </div>
-    <div class="btn-container">
-      <button class="btn" id="save">Save</button>
-    </div>
-  </div>
-  <div id="toast">
-    <div id="desc">Saved!</div>
-  </div>
-</body>
-<script src="../scripts/min/options.min.js"></script>
-
+  </body>
+  <script src="../scripts/min/options.min.js"></script>
 </html>

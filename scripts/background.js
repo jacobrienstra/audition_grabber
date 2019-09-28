@@ -1,24 +1,24 @@
 // thanks @ https://stackoverflow.com/questions/21535233/injecting-multiple-scripts-through-executescript-in-google-chrome/21535234
-(function () {
+(function() {
   function ScriptExecution(tabId) {
     this.tabId = tabId;
   }
 
-  ScriptExecution.prototype.executeScripts = function (fileArray) {
+  ScriptExecution.prototype.executeScripts = function(fileArray) {
     fileArray = Array.prototype.slice.call(arguments); // ES6: Array.from(arguments)
     return Promise.all(fileArray.map(file => exeScript(this.tabId, file))).then(
       () => this
     ); // 'this' will be use at next chain
   };
 
-  ScriptExecution.prototype.executeCodes = function (fileArray) {
+  ScriptExecution.prototype.executeCodes = function(fileArray) {
     fileArray = Array.prototype.slice.call(arguments);
     return Promise.all(fileArray.map(code => exeCodes(this.tabId, code))).then(
       () => this
     );
   };
 
-  ScriptExecution.prototype.injectCss = function (fileArray) {
+  ScriptExecution.prototype.injectCss = function(fileArray) {
     fileArray = Array.prototype.slice.call(arguments);
     return Promise.all(fileArray.map(file => exeCss(this.tabId, file))).then(
       () => this
@@ -70,15 +70,16 @@ const broadwayWorld = {
   actions: [new chrome.declarativeContent.ShowPageAction()]
 };
 
-chrome.runtime.onInstalled.addListener(function (details) {
-  chrome.storage.sync.set({
+chrome.runtime.onInstalled.addListener(function(details) {
+  chrome.storage.sync.set(
+    {
       sections: ["SEEKING", "PREPARATION", "OTHER DATES"],
       calendar: "apple"
     },
-    function () {
+    function() {
       chrome.declarativeContent.onPageChanged.removeRules(
         undefined,
-        function () {
+        function() {
           chrome.declarativeContent.onPageChanged.addRules([broadwayWorld]);
         }
       );
@@ -87,7 +88,6 @@ chrome.runtime.onInstalled.addListener(function (details) {
 });
 
 // Called when the user clicks on the browser action.
-chrome.pageAction.onClicked.addListener(function (tab) {
-  new ScriptExecution()
-    .executeScripts("scripts/min/grabber.min.js");
+chrome.pageAction.onClicked.addListener(function(tab) {
+  new ScriptExecution().executeScripts("scripts/min/grabber.min.js");
 });

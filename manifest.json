@@ -10,14 +10,19 @@
     "default_title": "Parses Broadway World Audition Listings and Adds to Calendar"
   },
 
-  "content_scripts": [{
-    "matches": ["https://www.broadwayworld.com/*equity-audition*"],
-    "css": ["css/toast.css"],
-    "js": [
-      "scripts/min/deps.min.js",
-      "scripts/min/global.min.js"
-    ]
-  }],
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.broadwayworld.com/*equity-audition*"],
+      "css": ["css/toast.css"],
+      "js": ["scripts/min/deps.min.js", "scripts/min/global.min.js"]
+    }
+  ],
 
   "background": {
     "scripts": ["scripts/min/background.min.js"],
