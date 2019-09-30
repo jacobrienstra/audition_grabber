@@ -1,6 +1,6 @@
 {
   "name": "auditiongrabber",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Chrome extension that parses audition listings to add to calendar",
   "dependencies": {
     "grunt-terser": "^0.1.0",
