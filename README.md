@@ -4,7 +4,7 @@ Chrome extention that exports an online audition posting as a .ics file or a goo
 
 Only works on BroadwayWorld.com right now, since Backstage and Equity has this built in. I might do Playbill later, idk.
 
-Is it robust? haha. No. I'm just scraping BroadwayWorld by "strong" tags and regex because the site is an absolute mess. If they change formatting it's very possible this will break, and there will certainly be cases where it doesn't work right now. I've already had to account for some bonkers edge cases. Or just, not having an event end time.
+Is it robust? haha. No. I'm just scraping BroadwayWorld by header tags and regex because the site is an absolute mess. If they change formatting it's very possible this will break, and there will certainly be cases where it doesn't work right now. I've already had to account for some bonkers edge cases. Or just, not having an event end time.
 
 All this to say, if there's anything not totally normal about the posting you should check that all the info is correct. If it's not, lmk (see below).
 
