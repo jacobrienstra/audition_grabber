@@ -1,10 +1,13 @@
 // American Timezones BWWorld is likely to use
 var tzAbbrs = {
   EDT: "America/New_York",
+  EST: "America/New_York",
   CDT: "America/Chicago",
+  CST: "America/Chicago",
   MDT: "America/Denver",
   MST: "America/Phoenix", // honestly, arizona?
-  PDT: "America/Los_Angeles"
+  PDT: "America/Los_Angeles",
+  PST: "America/Los_Angeles"
 };
 
 const dateRegex = /\b(?:(?:Mon)|(?:Tues?)|(?:Wed(?:nes)?)|(?:Thur?s?)|(?:Fri)|(?:Sat(?:ur)?)|(?:Sun))(?:day)?\b[:\-,]?\s*(?:(?:jan|feb)?r?(?:uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|oct(?:ober)?|(?:sept?|nov|dec)(?:ember)?)\s+\d{1,2}\s*,?\s*\d{4}/i;
