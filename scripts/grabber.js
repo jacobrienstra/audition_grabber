@@ -11,15 +11,16 @@ chrome.storage.sync.get(function(settings) {
     var defaultLoc = null;
     var desc = "";
 
-    // Assume the title is in the first tag (i KNOW i hate this too)
-    var title = headers[0];
+    // Assume the title is in the first tag (i hate)
+    headers = [...headers];
+    var title = headers.shift();
     // TODO: check parents
     var subject = title.textContent.trim() + " "; // bold text
     subject += nextUntil(title, sectionTag, "br")
       .map(node => node.textContent.trim())
       .join(" ");
-    for (const [i, header] of [...headers].entries()) {
-      let headerText = header.textContent.trim();
+    for (const [i, header] of headers.entries()) {
+      let headerText = header.firstChild.textContent;
       // I hate this so much it's so dumb but I have SEEN this.
       // part of the word is in the strong tag and
       // part isn't. why? who can say. certainly not BWayWorld!
@@ -39,7 +40,10 @@ chrome.storage.sync.get(function(settings) {
       switch (headerText) {
         case "AUDITION DATE":
         case "AUDITION DATES":
-          lines = nextUntil(header, sectionTag, "BR");
+          let lines = nextUntil(header, sectionTag, "BR");
+          if (lines.length === 0) {
+            lines = nextUntil(header.firstChild, "", "BR");
+          }
           // unaccounted for text init val
           let extraText = "";
           // check regex per line, collect extra
@@ -47,6 +51,8 @@ chrome.storage.sync.get(function(settings) {
             line = line.textContent.trim();
             // if date, add extraText and reset
             if (moment(line, "ddd, MMM D, YYYY").isValid()) {
+              // Add whatever extraText is currently stored to the previous date,
+              // as this is a new one
               if (dates.length > 0) {
                 dates[dates.length - 1].extraText += extraText;
                 extraText = "";
@@ -85,7 +91,7 @@ chrome.storage.sync.get(function(settings) {
                 start: [curDate, start].join(" "),
                 end: [curDate, end].join(" "),
                 tz: tz,
-                extraText: ""
+                extraText: "",
               });
               continue;
             } else {
@@ -122,7 +128,7 @@ chrome.storage.sync.get(function(settings) {
             return {
               start: start,
               end: end,
-              idesc: idesc + dateDict.extraText
+              idesc: idesc + dateDict.extraText,
             };
           });
           break;

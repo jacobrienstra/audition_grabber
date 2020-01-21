@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "BroadwayWorld Audition Grabber",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "options_page": "html/options.html",
   "permissions": ["declarativeContent", "activeTab", "downloads", "storage"],
 

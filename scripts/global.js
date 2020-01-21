@@ -7,7 +7,7 @@ var tzAbbrs = {
   MDT: "America/Denver",
   MST: "America/Phoenix", // honestly, arizona?
   PDT: "America/Los_Angeles",
-  PST: "America/Los_Angeles"
+  PST: "America/Los_Angeles",
 };
 
 const dateRegex = /\b(?:(?:Mon)|(?:Tues?)|(?:Wed(?:nes)?)|(?:Thur?s?)|(?:Fri)|(?:Sat(?:ur)?)|(?:Sun))(?:day)?\b[:\-,]?\s*(?:(?:jan|feb)?r?(?:uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|oct(?:ober)?|(?:sept?|nov|dec)(?:ember)?)\s+\d{1,2}\s*,?\s*\d{4}/i;
@@ -37,9 +37,9 @@ const launchToast = function(e = "Error. Sorry.", report = true, url = "") {
       url +
       "' target='_blank'>Tell me!</a> I'll try to fix it!";
   }
-  toastDiv.classList.remove("show");
+  toastDiv.className = "";
   void toastDiv.offsetWidth;
-  toastDiv.classList.add("show");
+  toastDiv.className = "show";
 };
 
 // Recursively check current node and all children
@@ -122,6 +122,7 @@ const getShortDate = function(line) {
 
 // Get all the sibling tags until some tag, filtering out filter
 // TODO: list of node types, map of filter to times
+// Returns list of siblings
 const nextUntil = function(node, until, filter, untilIter = 1) {
   var siblings = [];
   while ((node = node.nextSibling) && node.nodeType !== 9) {
@@ -134,8 +135,8 @@ const nextUntil = function(node, until, filter, untilIter = 1) {
     }
     if (node.nodeType === 1) {
       if (until) {
-        curNode = node;
-        mCount = 0;
+        let curNode = node;
+        let mCount = 0;
         for (let i = 0; i < untilIter; i++) {
           if (nodeOrChildrenMatches(node, until)) {
             mCount++;
